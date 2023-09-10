@@ -18,13 +18,18 @@ ball_radius = 10
 brick_height = 40
 brick_gap = 2
 gameover_screen = 400
+bg = (53, 59, 240)
+paddle_color = (90, 170, 176)
+ball_color = (240, 182, 7)
+# bg_surf = pygame.image.load('BlockBreaker/graphics/bg.png')
 
 pygame.init()
 GAME_FONT = pygame.font.SysFont("Fixedsys", 40)
 
 #draws game assets
 def draw(screen, paddle, ball, bricks, points):
-    screen.fill((255,255,255))
+    screen.fill(bg)
+    # screen.blit(bg_surf, (0,0))
     paddle.draw(screen)
     ball.draw(screen)
     for brick in bricks:
@@ -123,8 +128,8 @@ def main():
     pygame.display.set_caption("Block Breaker")
     clock = pygame.time.Clock()
     #init objects
-    paddle = Paddle(width/2-paddle_width/2, height-paddle_height-paddle_padding, paddle_width, paddle_height, (0,0,0))
-    ball = Ball(width/2, height - paddle_height - paddle_padding - ball_radius, ball_radius, (0,0,255))
+    paddle = Paddle(width/2-paddle_width/2, height-paddle_height-paddle_padding, paddle_width, paddle_height, paddle_color)
+    ball = Ball(width/2, height - paddle_height - paddle_padding - ball_radius, ball_radius, ball_color)
     bricks = generate_bricks(rows, cols, level)
     # score_text = GAME_FONT.render(f"Score: {points}", 1, "black")
 
