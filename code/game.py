@@ -3,6 +3,7 @@ from math import sin, cos, radians
 from sys import exit
 from paddle import Paddle
 from ball import Ball
+from brick import Brick
 
 #define colors
 bg = (200,200,200)
@@ -13,15 +14,20 @@ blue = (0, 0, 255)
 #define game variables
 width, height = 900, 600
 fps = 60
-cols = 12
+cols = 9
 rows = 5
 paddle_width, paddle_height, paddle_padding = 110, 20, 8
 ball_radius = 10
+brick_height = 40
+brick_gap = 2
 
-def draw(screen, paddle, ball):
+def draw(screen, paddle, ball, bricks):
     screen.fill(bg)
     paddle.draw(screen)
     ball.draw(screen)
+    for brick in bricks:
+        brick.draw(screen)
+
     pygame.display.update()
 
 def ball_collision(ball):
@@ -52,6 +58,21 @@ def ball_paddle_collision(ball, paddle):
     y_vel = ball.SPEED*-cos(angle)
     ball.set_vel(x_vel, y_vel)
 
+def generate_bricks(rows, cols):
+    total_gap = (cols+1)*brick_gap
+    brick_width = (width - total_gap) / cols
+    bricks = []
+
+    for row in range(rows):
+        for col in range(cols):
+            x = (brick_width + brick_gap) * col + brick_gap
+            y = (brick_height + brick_gap) * row + brick_gap
+            brick = Brick(x, y, brick_width, brick_height, rows - row)
+            bricks.append(brick)
+        
+    return bricks
+
+
 def main():
     #init pygame
     pygame.init()
@@ -62,6 +83,7 @@ def main():
     #init objects
     paddle = Paddle(width/2-paddle_width/2, height-paddle_height-paddle_padding, paddle_width, paddle_height, (0,0,0))
     ball = Ball(width/2, height - paddle_height - paddle_padding - ball_radius, ball_radius, blue)
+    bricks = generate_bricks(rows, cols)
 
     #pygame loop
     run = True
@@ -82,9 +104,14 @@ def main():
         ball.move()
         ball_paddle_collision(ball, paddle)
         ball_collision(ball)
+        for brick in bricks:
+            brick.collide(ball)
+            if(brick.health <= 0):
+                bricks.remove(brick)                
+            
 
         #refresh display
-        draw(screen, paddle, ball)
+        draw(screen, paddle, ball, bricks)
 
 
     pygame.quit()
