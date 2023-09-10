@@ -1,0 +1,10 @@
+- update colors
+- add points feature
+- add change brick color when hit to show remaining health
+- add random gen bricks
+- add losing screen
+- created brick class and brick generation
+- created ball and enabled ball collision
+- prevent paddle from moving off screen
+- moved pygame init to inside main, added paddle movement
+- init commit, pygame initialized and paddle created
