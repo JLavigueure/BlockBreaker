@@ -39,11 +39,11 @@ def main():
                 run = False
 
         keys = pygame.key.get_pressed()
-        if(keys[pygame.K_LEFT]):
+        if(keys[pygame.K_LEFT]) and paddle.x > 0:
             paddle.move(-1)
-        if(keys[pygame.K_RIGHT]):
+        if(keys[pygame.K_RIGHT]) and paddle.x + paddle_width < width:
             paddle.move(1)
-            
+
         #refresh display
         draw(screen, paddle)
 
