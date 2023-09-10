@@ -37,7 +37,7 @@ class Brick():
             return False
         self.hit()
         self.brick_collision_angle(ball)
-        return 
+        return True
         
     def hit(self):
         self.health -= 1

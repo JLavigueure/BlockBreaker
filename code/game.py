@@ -11,6 +11,8 @@ width, height = 900, 600
 fps = 60
 cols = 9
 rows = 5
+hit_points = 25
+break_points = 175
 paddle_width, paddle_height, paddle_padding = 110, 20, 8
 ball_radius = 10
 brick_height = 40
@@ -21,13 +23,16 @@ pygame.init()
 GAME_FONT = pygame.font.SysFont("Fixedsys", 40)
 
 #draws game assets
-def draw(screen, paddle, ball, bricks):
+def draw(screen, paddle, ball, bricks, points):
     screen.fill((255,255,255))
     paddle.draw(screen)
     ball.draw(screen)
     for brick in bricks:
         brick.draw(screen)
     
+    score_text = GAME_FONT.render(f"Score: {points}", 1, "black")
+    screen.blit(score_text, (10, height - score_text.get_height()-10))
+
     pygame.display.update()
 
 #returns true if ball collides with floor, else false and change ball velocity
@@ -101,17 +106,18 @@ def generate_random_health(level):
     if(level == 10):
         return random.choice(arange(1,6), p=[0, 0, .1, .5, .4])
     return random.choice(arange(1,6), p=[0, 0, 0, .5, .5])
-    
-    
 
-def game_over(screen):
+def game_over(screen, points):
     lose_text = GAME_FONT.render("Game over", 1, "black")
+    final_score_text = GAME_FONT.render(f"Score: {points}", 1, "black")
+    screen.blit(final_score_text, (width/2 - lose_text.get_width()/2, height/2 + 50))
     screen.blit(lose_text, (width/2 - lose_text.get_width()/2, height/2))
     pygame.display.update()
 
 def main():
     level = 1
     lives = 1
+    points = 0
     #init pygame
     screen = pygame.display.set_mode((width, height))
     pygame.display.set_caption("Block Breaker")
@@ -120,6 +126,7 @@ def main():
     paddle = Paddle(width/2-paddle_width/2, height-paddle_height-paddle_padding, paddle_width, paddle_height, (0,0,0))
     ball = Ball(width/2, height - paddle_height - paddle_padding - ball_radius, ball_radius, (0,0,255))
     bricks = generate_bricks(rows, cols, level)
+    # score_text = GAME_FONT.render(f"Score: {points}", 1, "black")
 
 
     #pygame loop
@@ -143,9 +150,11 @@ def main():
         ball_collision(ball)
         
         for brick in bricks:
-            brick.collide(ball)
+            if(brick.collide(ball)):
+                points += hit_points
             if(brick.health <= 0 and lives > 0):
-                bricks.remove(brick)                
+                bricks.remove(brick)  
+                points += break_points             
 
         if not(bricks):
             level+=1
@@ -154,11 +163,11 @@ def main():
 
 
         #refresh display
-        draw(screen, paddle, ball, bricks)
+        draw(screen, paddle, ball, bricks, points)
         if(ball.y + ball_radius >= height):
             lives-=1
         if(lives <= 0):
-            game_over(screen)
+            game_over(screen, points)
         
 
     pygame.quit()
