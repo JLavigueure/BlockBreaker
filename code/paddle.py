@@ -12,3 +12,8 @@ class Paddle:
 
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, (self.x, self.y, self.width, self.height))
+
+    #-1 moves left, 1 moves right
+    def move(self, direction):
+        self.x += self.velocity * direction
+    
