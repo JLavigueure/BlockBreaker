@@ -1,4 +1,5 @@
 import pygame
+from numpy import random, arange
 from math import sin, cos, radians
 from sys import exit
 from paddle import Paddle
@@ -62,19 +63,46 @@ def ball_paddle_collision(ball, paddle):
     ball.set_vel(x_vel, y_vel)
 
 #generates bricks
-def generate_bricks(rows, cols):
+def generate_bricks(rows, cols, level):
     total_gap = (cols+1)*brick_gap
     brick_width = (width - total_gap) / cols
     bricks = []
 
+
     for row in range(rows):
         for col in range(cols):
+            health = generate_random_health(level)
             x = (brick_width + brick_gap) * col + brick_gap
             y = (brick_height + brick_gap) * row + brick_gap
-            brick = Brick(x, y, brick_width, brick_height, rows - row)
+            brick = Brick(x, y, brick_width, brick_height, health)
             bricks.append(brick)
         
     return bricks
+
+def generate_random_health(level):
+    if(level == 1):
+        return random.choice(arange(1,6), p=[.4, .4, .1, .1, 0])
+    if(level == 2):
+        return random.choice(arange(1,6), p=[.4, .3, .2, .1, 0])
+    if(level == 3):
+        return random.choice(arange(1,6), p=[.3, .2, .3, .1, .1])
+    if(level == 4):
+        return random.choice(arange(1,6), p=[.2, .2, .3, .2, .1])
+    if(level == 5):
+        return random.choice(arange(1,6), p=[.1, .2, .3, .2, .2])
+    if(level == 6):
+        return random.choice(arange(1,6), p=[0, .2, .4, .2, .2])
+    if(level == 7):
+        return random.choice(arange(1,6), p=[0, .1, .3, .4, .2])
+    if(level == 8):
+        return random.choice(arange(1,6), p=[0, .1, .2, .4, .3])
+    if(level == 9):
+        return random.choice(arange(1,6), p=[0, 0, .2, .4, .4])
+    if(level == 10):
+        return random.choice(arange(1,6), p=[0, 0, .1, .5, .4])
+    return random.choice(arange(1,6), p=[0, 0, 0, .5, .5])
+    
+    
 
 def game_over(screen):
     lose_text = GAME_FONT.render("Game over", 1, "black")
@@ -82,6 +110,7 @@ def game_over(screen):
     pygame.display.update()
 
 def main():
+    level = 1
     lives = 1
     #init pygame
     screen = pygame.display.set_mode((width, height))
@@ -90,7 +119,7 @@ def main():
     #init objects
     paddle = Paddle(width/2-paddle_width/2, height-paddle_height-paddle_padding, paddle_width, paddle_height, (0,0,0))
     ball = Ball(width/2, height - paddle_height - paddle_padding - ball_radius, ball_radius, (0,0,255))
-    bricks = generate_bricks(rows, cols)
+    bricks = generate_bricks(rows, cols, level)
 
 
     #pygame loop
@@ -115,8 +144,14 @@ def main():
         
         for brick in bricks:
             brick.collide(ball)
-            if(brick.health <= 0):
+            if(brick.health <= 0 and lives > 0):
                 bricks.remove(brick)                
+
+        if not(bricks):
+            level+=1
+            bricks = generate_bricks(rows, cols, level)
+            
+
 
         #refresh display
         draw(screen, paddle, ball, bricks)

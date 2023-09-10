@@ -21,7 +21,7 @@ class Brick():
         if(self.health == 4):
             self.color = (255, 0, 0)
         if(self.health == 3):
-            self.color = (255, 69, 0)
+            self.color = (255, 150, 0)
         if(self.health == 2):
             self.color = (255, 255, 0)
         if(self.health == 1):
