@@ -41,6 +41,7 @@ class Brick():
         
     def hit(self):
         self.health -= 1
+        self.set_color()
 
     def brick_collision_angle(self, ball):
         #check which side collided
