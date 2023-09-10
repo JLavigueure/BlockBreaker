@@ -5,12 +5,6 @@ from paddle import Paddle
 from ball import Ball
 from brick import Brick
 
-#define colors
-bg = (200,200,200)
-red = (255, 0 ,0)
-green = (0, 255, 0)
-blue = (0, 0, 255)
-
 #define game variables
 width, height = 900, 600
 fps = 60
@@ -20,28 +14,37 @@ paddle_width, paddle_height, paddle_padding = 110, 20, 8
 ball_radius = 10
 brick_height = 40
 brick_gap = 2
+gameover_screen = 400
 
+pygame.init()
+GAME_FONT = pygame.font.SysFont("Fixedsys", 40)
+
+#draws game assets
 def draw(screen, paddle, ball, bricks):
-    screen.fill(bg)
+    screen.fill((255,255,255))
     paddle.draw(screen)
     ball.draw(screen)
     for brick in bricks:
         brick.draw(screen)
-
+    
     pygame.display.update()
 
+#returns true if ball collides with floor, else false and change ball velocity
 def ball_collision(ball):
     # collide with walls
     if(ball.x-ball_radius <= 0 or ball.x + ball_radius >= width):
         ball.set_vel(ball.x_vel * - 1, ball.y_vel)
+        return False
     # collide with roof
     if(ball.y-ball_radius <= 0):
         ball.set_vel(ball.x_vel, ball.y_vel * -1)
+        return False
 
     # collide will floor
     if(ball.y + ball_radius >= height):
-        ball.set_vel(ball.x_vel, ball.y_vel *-1)
+        return True
 
+#changes ball velocity determined by position hit on paddle
 def ball_paddle_collision(ball, paddle):
     #check collision
     if (ball.y + ball_radius < paddle.y) or not(ball.x + ball_radius > paddle.x and ball.x - ball_radius < paddle.x + paddle_width):
@@ -58,6 +61,7 @@ def ball_paddle_collision(ball, paddle):
     y_vel = ball.SPEED*-cos(angle)
     ball.set_vel(x_vel, y_vel)
 
+#generates bricks
 def generate_bricks(rows, cols):
     total_gap = (cols+1)*brick_gap
     brick_width = (width - total_gap) / cols
@@ -72,18 +76,22 @@ def generate_bricks(rows, cols):
         
     return bricks
 
+def game_over(screen):
+    lose_text = GAME_FONT.render("Game over", 1, "black")
+    screen.blit(lose_text, (width/2 - lose_text.get_width()/2, height/2))
+    pygame.display.update()
 
 def main():
+    lives = 1
     #init pygame
-    pygame.init()
     screen = pygame.display.set_mode((width, height))
     pygame.display.set_caption("Block Breaker")
     clock = pygame.time.Clock()
-
     #init objects
     paddle = Paddle(width/2-paddle_width/2, height-paddle_height-paddle_padding, paddle_width, paddle_height, (0,0,0))
-    ball = Ball(width/2, height - paddle_height - paddle_padding - ball_radius, ball_radius, blue)
+    ball = Ball(width/2, height - paddle_height - paddle_padding - ball_radius, ball_radius, (0,0,255))
     bricks = generate_bricks(rows, cols)
+
 
     #pygame loop
     run = True
@@ -104,15 +112,19 @@ def main():
         ball.move()
         ball_paddle_collision(ball, paddle)
         ball_collision(ball)
+        
         for brick in bricks:
             brick.collide(ball)
             if(brick.health <= 0):
                 bricks.remove(brick)                
-            
 
         #refresh display
         draw(screen, paddle, ball, bricks)
-
+        if(ball.y + ball_radius >= height):
+            lives-=1
+        if(lives <= 0):
+            game_over(screen)
+        
 
     pygame.quit()
     quit()

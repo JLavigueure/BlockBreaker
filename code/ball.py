@@ -9,7 +9,7 @@ class Ball:
         self.y = y
         self.radius = radius
         self.color = color
-        self.x_vel = 2
+        self.x_vel = 0
         self.y_vel = -5
 
     def move(self):
