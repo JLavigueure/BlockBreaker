@@ -1,6 +1,18 @@
+- add readme.txt image
+- change jpg to png
+- add readme.txt images
+- Update README.md
+- Update README.md
+- Merge branch 'main' of https://github.com/JLavigueure/BlockBreaker
+- add readme.txt images
+- Create README.md
+- Create requirements.txt
+- update changelog.md
+- Merge branch 'main' of https://github.com/JLavigueure/BlockBreaker
 - add ball speed increase w/level. Fix bug: AI paddle off screen, ai dividing by 0 when no bricks, brick generation on top of ball
 - added Ai class and AI boolean in game variables
 - prevent getting points after reaching 0 lives
+- Create CHANGELOG.md
 - update colors
 - add points feature
 - add change brick color when hit to show remaining health
