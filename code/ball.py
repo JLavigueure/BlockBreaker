@@ -1,10 +1,10 @@
 import pygame
 
 class Ball: 
-    SPEED = 5
     MAXBOUNCEANGLE = 75
     
     def __init__(self, x, y, radius, color):
+        self.speed = 5
         self.x = x
         self.y = y
         self.radius = radius

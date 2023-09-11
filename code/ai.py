@@ -35,6 +35,8 @@ class Ai:
     #returns avg x value of all bricks that currently exist
     def getBricksAvgX(self, bricks):
         qty = len(bricks)
+        if(qty == 0):
+            return 0
         sumx = 0
         for b in bricks:
             sumx+=b.x

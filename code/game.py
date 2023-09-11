@@ -23,6 +23,7 @@ gameover_screen = 400
 bg = (53, 59, 240)
 paddle_color = (90, 170, 176)
 ball_color = (240, 182, 7)
+ball_speed_increase = 1.2
 # bg_surf = pygame.image.load('BlockBreaker/graphics/bg.png')
 
 pygame.init()
@@ -70,8 +71,8 @@ def ball_paddle_collision(ball, paddle):
     angle = radians(percent_width * ball.MAXBOUNCEANGLE)
 
     #set new velocity
-    x_vel = ball.SPEED*sin(angle)
-    y_vel = ball.SPEED*-cos(angle)
+    x_vel = ball.speed*sin(angle)
+    y_vel = ball.speed*-cos(angle)
     ball.set_vel(x_vel, y_vel)
 
 #generates bricks
@@ -136,7 +137,6 @@ def main():
     paddle = Paddle(width/2-paddle_width/2, height-paddle_height-paddle_padding, paddle_width, paddle_height, paddle_color)
     ball = Ball(width/2, height - paddle_height - paddle_padding - ball_radius, ball_radius, ball_color)
     bricks = generate_bricks(rows, cols, level)
-    # score_text = GAME_FONT.render(f"Score: {points}", 1, "black")
 
 
     #pygame loop
@@ -155,7 +155,12 @@ def main():
             if(keys[pygame.K_RIGHT]) and paddle.x + paddle_width < width:
                 paddle.move(1)
         else:
-            paddle.move(ai.get_move(paddle, ball, bricks))
+            ai_move = ai.get_move(paddle, ball, bricks)
+            if(ai_move == 1 and paddle.x + paddle.width < width):
+                paddle.move(ai_move)
+            elif(ai_move == -1 and paddle.x > 0):
+                paddle.move(ai_move)
+
         
                 
         #ball movenent and collisions
@@ -170,9 +175,10 @@ def main():
                 bricks.remove(brick)  
                 points += break_points             
 
-        if not(bricks):
+        if not(bricks) and ball.y > brick_height*rows + 5:
             level+=1
             bricks = generate_bricks(rows, cols, level)
+            ball.speed *= ball_speed_increase
             
 
 
