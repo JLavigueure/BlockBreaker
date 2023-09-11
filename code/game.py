@@ -5,8 +5,10 @@ from sys import exit
 from paddle import Paddle
 from ball import Ball
 from brick import Brick
+from ai import Ai
 
 #define game variables
+AI = True
 width, height = 900, 600
 fps = 60
 cols = 9
@@ -120,6 +122,9 @@ def game_over(screen, points):
     pygame.display.update()
 
 def main():
+    if(AI):
+        ai = Ai()
+
     level = 1
     lives = 1
     points = 0
@@ -143,12 +148,16 @@ def main():
                 run = False
         
         #paddle movement
-        keys = pygame.key.get_pressed()
-        if(keys[pygame.K_LEFT]) and paddle.x > 0:
-            paddle.move(-1)
-        if(keys[pygame.K_RIGHT]) and paddle.x + paddle_width < width:
-            paddle.move(1)
+        if not(AI):
+            keys = pygame.key.get_pressed()
+            if(keys[pygame.K_LEFT]) and paddle.x > 0:
+                paddle.move(-1)
+            if(keys[pygame.K_RIGHT]) and paddle.x + paddle_width < width:
+                paddle.move(1)
+        else:
+            paddle.move(ai.get_move(paddle, ball, bricks))
         
+                
         #ball movenent and collisions
         ball.move()
         ball_paddle_collision(ball, paddle)
@@ -180,4 +189,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
