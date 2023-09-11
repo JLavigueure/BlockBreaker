@@ -155,7 +155,7 @@ def main():
         ball_collision(ball)
         
         for brick in bricks:
-            if(brick.collide(ball)):
+            if(brick.collide(ball) and lives > 0):
                 points += hit_points
             if(brick.health <= 0 and lives > 0):
                 bricks.remove(brick)  
