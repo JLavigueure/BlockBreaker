@@ -10,7 +10,7 @@ from ai import Ai
 #define game variables
 AI = True
 width, height = 900, 600
-fps = 60
+fps = 500
 cols = 9
 rows = 5
 hit_points = 25
@@ -23,7 +23,7 @@ gameover_screen = 400
 bg = (53, 59, 240)
 paddle_color = (90, 170, 176)
 ball_color = (240, 182, 7)
-ball_speed_increase = 1.2
+ball_speed_increase = 1.15
 # bg_surf = pygame.image.load('BlockBreaker/graphics/bg.png')
 
 pygame.init()
@@ -148,18 +148,20 @@ def main():
                 run = False
         
         #paddle movement
-        if not(AI):
-            keys = pygame.key.get_pressed()
-            if(keys[pygame.K_LEFT]) and paddle.x > 0:
-                paddle.move(-1)
-            if(keys[pygame.K_RIGHT]) and paddle.x + paddle_width < width:
-                paddle.move(1)
-        else:
-            ai_move = ai.get_move(paddle, ball, bricks)
-            if(ai_move == 1 and paddle.x + paddle.width < width):
-                paddle.move(ai_move)
-            elif(ai_move == -1 and paddle.x > 0):
-                paddle.move(ai_move)
+        if(lives > 0):
+            if not(AI):
+                keys = pygame.key.get_pressed()
+                if(keys[pygame.K_LEFT]) and paddle.x > 0:
+                    paddle.move(-1)
+                if(keys[pygame.K_RIGHT]) and paddle.x + paddle_width < width:
+                    paddle.move(1)
+            else:
+                ai_move = ai.get_move(paddle, ball, bricks, width)
+                if(ai_move == 1 and paddle.x + paddle.width < width):
+                    paddle.move(ai_move)
+                elif(ai_move == -1 and paddle.x > 0):
+                    paddle.move(ai_move)
+        
 
         
                 
@@ -175,7 +177,7 @@ def main():
                 bricks.remove(brick)  
                 points += break_points             
 
-        if not(bricks) and ball.y > brick_height*rows + 5:
+        if not(bricks) and ball.y > brick_height*rows + 15:
             level+=1
             bricks = generate_bricks(rows, cols, level)
             ball.speed *= ball_speed_increase
