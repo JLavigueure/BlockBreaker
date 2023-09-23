@@ -10,7 +10,7 @@ from ai import Ai
 #define game variables
 AI = True
 width, height = 900, 600
-fps = 500
+fps = 60
 cols = 9
 rows = 5
 hit_points = 25
